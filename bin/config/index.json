@@ -1,0 +1,9 @@
+{
+  "components": {
+    "index": true
+  },
+  "features": {
+    "index": true,
+    "children": {}
+  }
+}

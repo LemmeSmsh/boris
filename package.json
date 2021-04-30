@@ -1,0 +1,21 @@
+{
+  "name": "react-helper-cli",
+  "version": "1.0.0",
+  "description": "",
+  "main": "bin/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Iovan Ironfield",
+  "license": "MIT",
+  "bin": {
+    "boris": "./bin/index.js"
+  },
+  "devDependencies": {
+    "boxen": "^5.0.1",
+    "chalk": "^4.1.1",
+    "json-beautify": "^1.1.1",
+    "yargs": "^16.2.0"
+  }
+}

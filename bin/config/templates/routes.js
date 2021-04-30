@@ -1,0 +1,5 @@
+const routesConfig = {
+  '/': {
+    name: 'index',
+  },
+};
