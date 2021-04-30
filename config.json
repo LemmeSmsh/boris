@@ -1,5 +1,0 @@
-{
-  "smth": "smth",
-  "active": "react-redux",
-  "inactive": [ "gatsby", "head-point", "next", "default" ]
-}

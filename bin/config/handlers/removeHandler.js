@@ -6,48 +6,63 @@ const ask = require('../../lib/ask');
 
 const config = require('../config.json'); // object
 
-const removeHandler = ({ key, value, flags }) => {
+const removeHandler = async ({ key, value, flags }) => {
   switch (key) {
     case 'template':
-      let { active, inactive, removed, ...rest } = config;
+      let { active, storage, removed, ...rest } = config;
 
       if (value === 'default') {
-        logger.error('You can not remove default template (just keep it inactive)');
+        logger.error('You can not remove **default** template (just keep it inactive)');
         break;
       }
       if (active === value) {
-        const answer = ask(`**<${value};blue>** template is active right now. Do you want to remove it? (y/n)`);
+        const answer = await ask(`Template **<${value};blue>** is active right now. Do you want to remove it? (y/n)`);
 
         if (String(answer).toLowerCase() === 'y') {
-          inactive.push(active);
-          active = inactive[0];
+          active = 'default';
         } else {
           break;
         }
       }
-      if (![...inactive, ...removed].includes(value)) {
-        logger.error(`**${value}** template not found`);
+      if (![...storage, ...removed].includes(value)) {
+        logger.error(`Template **${value}** not found`);
         break;
       }
-      if (removed.includes(value)) {
+      if (removed.includes(value) && !flags.f) {
         logger.error(
-          `**${value}** template is already removed (run "boris remove template ${value} -f" to delete it permanently)`
+          `Template **${value}** is already removed (run **boris remove template ${value} -f** to delete it permanently)`
         );
         break;
       }
 
-      const nextConfig = {
-        ...rest,
-        active,
-        inactive: [...inactive, active].filter((template) => template !== value),
-        removed: [...removed, value],
-      };
+      if (flags.f) {
+        const answer = await ask(`Do you want to delete <${value};blue> permanently? (y/n)`);
 
-      fs.writeFile('./bin/config/config.json', json(nextConfig), (err) => {
-        err ? logger.error(err) : logger.success(`Current active template is **<${value};blue>**`);
-      });
+        if (String(answer).toLowerCase() === 'y') {
+          removed = removed.filter((template) => template !== value);
+          storage = storage.filter((template) => template !== value);
 
-      break;
+          fs.writeFile('./bin/config/config.json', json({ ...config, storage, removed, active }), (err) => {
+            err ? logger.error(err) : logger.success(`Template **<${value};red>** is deleted`);
+          });
+        }
+
+        break;
+      } else {
+        const nextConfig = {
+          ...config,
+          active,
+          storage: storage.filter((template) => template !== value),
+          removed: [...removed, value],
+        };
+
+        fs.writeFile('./bin/config/config.json', json(nextConfig), (err) => {
+          err ? logger.error(err) : logger.success(`Template **<${value};red>** is successfully removed`);
+        });
+
+        break;
+      }
+
     default:
       break;
   }

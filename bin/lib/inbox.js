@@ -10,16 +10,16 @@ const defaultInboxOptions = {
   backgroundColor: '#555555',
 };
 
-const matcherBold = /\*{2}\S+\*{2}/g;
+const matcherBold = /\s?\*{2}.+?\*{2}\s?/g;
 const matcherColor = /<.+;[#\d\w]+>/g;
 
 const transformText = (text) => {
   const bolded = text.match(matcherBold) || [];
 
   bolded.forEach((match) => {
-    const replacer = chalk.bold(match.replace(/\*{2}/g, ''));
+    const replacer = chalk.bold(match.replace(/\*{2}/g, '').trim());
 
-    text = text.replace(match, replacer);
+    text = text.replace(match.trim(), replacer);
   });
 
   const colored = text.match(matcherColor) || [];

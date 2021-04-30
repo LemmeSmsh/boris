@@ -8,21 +8,20 @@ const config = require('../config.json'); // object
 const setHandler = ({ key, value, flags }) => {
   switch (key) {
     case 'active':
-      const { active, inactive, ...rest } = config;
+      const { active, storage, ...rest } = config;
 
       if (active === value) {
-        logger.warn(`**<${value};blue>** template is already active`);
+        logger.warn(`Template **<${value};blue>** is already active`);
         break;
       }
-      if (!inactive.includes(value)) {
-        logger.error(`Inactive templates doesn\'t include "**${value}**"`);
+      if (!storage.includes(value)) {
+        logger.error(`Templates storage doesn\'t include "**${value}**"`);
         break;
       }
 
       const nextConfig = {
-        ...rest,
+        ...config,
         active: value,
-        inactive: [...inactive, active].filter((template) => template !== value),
       };
 
       fs.writeFile('./bin/config/config.json', json(nextConfig), (err) => {

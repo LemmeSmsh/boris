@@ -7,7 +7,7 @@
 const json = require('../lib/json');
 const logger = require('../lib/logger');
 const handlers = require('./handlers/index');
-const { active, inactive } = require('./config.json'); // object
+const { active, storage, removed } = require('./config.json'); // object
 
 const path = require('path');
 const fs = require('fs');
@@ -26,37 +26,48 @@ const commandKey = _[1];
 const commandData = {
   key: _[2],
   value: _[3],
+  flags,
 };
 
-console.log(argv);
-
-const displayList = () => {
+const displayList = (flags) => {
   const fullList = [
-    `Active: **<${active};blue>**`,
-    '**============================**',
     '<Templates list;yellow>:',
-    inactive.reduce((acc, current, index) => (acc += `**${++index}.** ${current}\n`), ''),
-  ].join('\n\n');
+    storage.reduce((acc, current, index) => (acc += `**${++index}.** ${current}\n`), ''),
+  ];
 
-  logger.log(fullList);
+  fullList[1] = fullList[1].replace(active, `**<${active};blue>**`);
+
+  if (flags.a) {
+    fullList.push('**============================**');
+    fullList.push('<Removed templates;red>:');
+    fullList.push(removed.reduce((acc, current, index) => (acc += `**${++index}.** ${current}\n`), ''));
+  }
+
+  logger.log(fullList.join('\n\n'));
 };
 
-const displayActive = () => {
+const displayActive = (flags) => {
   logger.success(`Current template is **<${active};blue>**`);
 };
 
 switch (commandKey) {
   case 'list':
-    displayList();
+    displayList(flags);
     break;
   case 'active':
-    displayActive();
+    displayActive(flags);
     break;
   case 'set':
     handlers.set(commandData);
     break;
   case 'add':
     handlers.add(commandData);
+    break;
+  case 'remove':
+    handlers.remove(commandData);
+    break;
+  case 'restore':
+    handlers.restore(commandData);
     break;
   case 'export':
     break;

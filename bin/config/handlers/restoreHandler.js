@@ -5,31 +5,28 @@ const json = require('../../lib/json');
 
 const config = require('../config.json'); // object
 
-const addHandler = ({ key, value, flags }) => {
+const restoreHandler = ({ key, value, flags }) => {
   switch (key) {
     case 'template':
       const { active, storage, removed, ...rest } = config;
 
       if (storage.includes(value)) {
-        logger.error(`Template **${value}** is already defined!`);
+        logger.error(`Template **${value}** is not removed`);
         break;
       }
-      if (removed.includes(value)) {
-        logger.warn(
-          `Template with **${value}** name is currently removed (run "boris config restore template ${value}" to restore it or "boris config remove template ${value} -f" to remove it permanently)`
-        );
+      if (!removed.includes(value)) {
+        logger.error(`Template **<${value};red>** doesn\'t exist`);
         break;
       }
 
       const nextConfig = {
         ...config,
         storage: [...storage, value],
+        removed: removed.filter((template) => template !== value),
       };
 
       fs.writeFile('./bin/config/config.json', json(nextConfig), (err) => {
-        err
-          ? logger.error(err)
-          : logger.success(`Template **${value}** is successfully added, current status: <inactive;yellow>`);
+        err ? logger.error(err) : logger.success(`Template **<${value};yellow>** is successfully restored!`);
       });
 
       break;
@@ -38,4 +35,4 @@ const addHandler = ({ key, value, flags }) => {
   }
 };
 
-module.exports = addHandler;
+module.exports = restoreHandler;
