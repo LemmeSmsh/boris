@@ -1,0 +1,18 @@
+{
+  "components": {
+    "index": true,
+    "children": false
+  },
+  "config": {
+    "index": true,
+    "children": false
+  },
+  "features": {
+    "index": true,
+    "children": false
+  },
+  "modules": {
+    "index": true,
+    "children": false
+  }
+}

@@ -1,0 +1,5 @@
+{
+  "active": "head-point",
+  "inactive": ["next", "default", "gatsby"],
+  "removed": ["react-redux"]
+}

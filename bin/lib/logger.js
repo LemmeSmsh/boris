@@ -4,29 +4,25 @@ const inbox = require('./inbox');
 const loggerOptions = {
   log: {
     padding: 1,
-    margin: 1,
-    borderStyle: 'round',
+    borderStyle: 'single',
     borderColor: 'white',
     backgroundColor: '#333',
   },
   success: {
     padding: 1,
-    margin: 1,
-    borderStyle: 'round',
+    borderStyle: 'double',
     borderColor: 'green',
     backgroundColor: '#333',
   },
   warn: {
     padding: 1,
-    margin: 1,
-    borderStyle: 'round',
+    borderStyle: 'single',
     borderColor: 'yellow',
     backgroundColor: '#333',
   },
   error: {
     padding: 1,
-    margin: 1,
-    borderStyle: 'round',
+    borderStyle: 'bold',
     borderColor: 'red',
     backgroundColor: '#333',
   },
@@ -34,9 +30,19 @@ const loggerOptions = {
 
 const logger = new Proxy(console, {
   get(target, prop) {
+    const log = (message, titled) => target.log(inbox(message, loggerOptions[prop], titled));
+
     if (Object.keys(loggerOptions).includes(prop)) {
       return (message) => {
-        target.log(inbox(message, null, loggerOptions[prop]));
+        switch (prop) {
+          case 'error':
+            target.log(chalk.red.bold(`\nERROR:`));
+            log(message, true);
+            break;
+          default:
+            log(message);
+            break;
+        }
       };
     } else {
       target.log(inbox(`logger is called with ${prop}`, null, loggerOptions['error']));

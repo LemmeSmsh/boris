@@ -2,6 +2,7 @@
 const argv = require('yargs/yargs')(process.argv.slice(2)).argv;
 
 switch (argv._[0]) {
+  case 'set':
   case 'config':
     require('./config');
     break;
